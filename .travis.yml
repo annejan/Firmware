@@ -3,6 +3,13 @@ language: bash
 os:
   - linux
 
+ env:
+  global:
+   - secure: "ocWiPQBCSpS19p/DJNi/J6rFrmotzF3mGkT39M8urDaGzZgBGqYWjbMHPe8clmSCl5lgdhBNrmbTV7kO7C2lYs1zqvXQwKolQ/eZoNi0zOFqBecoOOrFrY7KnSZKEc7+Qzgh4qGYIJio7FyP3YN2/HDVh3nB6GxrvHQtTy4kDbKtFgczmvmc1Eh6aiGW3i5s7T8/rerhxGi8Ebk1iL5kn2zREvE84Ae+dWLCQmIdCKi7192AtHdyX/1HoQtBZUQaAuSBXjBfFChK02+91ozD5vqzx1wsAzAQhvM4QqsaB5ux1gfTtsb7W077q3C86kCaYkHn1empFxy+PpxEG1dJj1wByDRCcgvecGxfB/OJSEWvKT7MvEtBgVsSUT+hxo67QnR/dK2EU8r94okajDolWdZXquQoXx8alwquxSIuoix05InsYGUbwQCN69kzLsqOTQQDpRBdxU5rIMgViM8Kng26f4CM5R7vdgdNUrkX62T6akMvkeLGoNpJKg6/ZPRk2fdmd6E0ZgZwVC9O7rGti4yEnntE12XKb+JZOLJgHUtN6zEew+z0JAPufWMUiAZXj5VBoF07h2vdVDkEJq7gNRbvevfw0gZ4urw9u9u6tNqamJ6vck5x3AN/TKqsSNDCkw0+ZQ1OElKxZDVrRHhN8LZTCIXPEWSSgJzo5s4lBJs="
+
+before_install:
+      - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+
 addons:
   apt:
     packages:
