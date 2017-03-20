@@ -9,6 +9,14 @@ addons:
       - gperf
       - python
       - python-serial
+  coverity_scan:
+    project:
+      name: annejan/Firmware
+      description: Build submitted via Travis CI
+    notification_email: travis@annejan.com
+    build_command_prepend: make defconfig; make clean
+    build_command: make
+    branch_pattern: coverity_scan
 
 before_install:
   # Save path to the git respository
@@ -29,12 +37,3 @@ script:
   # Build project from the git repository
   - make
 
-notifications:
-  irc:
-    channels:
-      - "chat.freenode.net#sha2017-badge"
-      - "chat.freenode.net#sha2017-badge-dev"
-    on_success: change
-    on_failure: always
-    use_notice: true
-    skip_join: true
