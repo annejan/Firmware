@@ -3,12 +3,29 @@ language: bash
 os:
   - linux
 
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "5U+Vos99ndJxpRz9Ru6y/xoCrUlHyrvOsTtm9ddO43rf470HykSW6unqqPRjzyiJa3vtj67vhNVxmQx+9CVB7P1WOAdhBV3ck0XdXzVQtdcFA01swZJOgfz0ggcYqXQI2k8XP1q0vMYuFkSPETR9G30ayKKUc5n5SfTAfsMHoI64zO6YYiiH8K75KkmB9sLH4FuxjoHgxQV3uRTpKH5tp9//aHlLjgeAMEg55cRZzWwkJf2M/Mrk/2ykeB5V5fhpPBgUV0G5Wb2BnojAQIbvIoTO8KVUKAr78R9Mj61XGOXbPaZHx6ugxnlw2gsb8kFF1rDKMpHZ4sUyaSMvjNkMozPqP0n7IH4cZg0Jdbh3NdZQrRa8ddlHmz3CHZEIDpkNUBlvRL2jdfnAuOJLzjbc+2xAHndATa8gtEMCP0RCzkDjtGn80dq0TbaEx6htdlZlf95V8gYhrXE+RA/laLDdaQgPVpjVxWb3ESrOpEf9C91sGRDUvaXDUlBc/C/2FzRAxnqmwIxg+m/kwDOONcHp7t1kROO6PpmC/y58FRuZ4Q+eFSHJcLWvE/JAn/9fgnvf9BJG7+gV7Nj0CRxRhaJmQhric7UDCxWc7Td36ARBkq/RxH9HfMjXVozsg694EWpzD85B0WAtJHwK21+FdtO0pf9yf0OJKFLmzh+lIz1sUAE="
+
+before_install:
+      - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+
 addons:
   apt:
     packages:
       - gperf
       - python
       - python-serial
+  coverity_scan:
+    project:
+      name: "annejan/Firmware"
+      description: "Build submitted via Travis CI"
+    notification_email: brouwer@annejan.com
+    build_command_prepend: "./configure; make clean"
+    build_command:   "make -j 4"
+    branch_pattern: coverity_scan
 
 before_install:
   # Save path to the git respository
@@ -46,3 +63,4 @@ notifications:
     on_failure: always
     use_notice: true
     skip_join: true
+ 
