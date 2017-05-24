@@ -374,9 +374,12 @@ app_main(void) {
 
 	bool buzz = false;
 
+	#ifdef PORTEXP_PIN_NUM_LEDS
 	badge_portexp_set_output_state(PORTEXP_PIN_NUM_VIBRATOR, 0);
 	badge_portexp_set_output_high_z(PORTEXP_PIN_NUM_VIBRATOR, 0);
 	badge_portexp_set_io_direction(PORTEXP_PIN_NUM_VIBRATOR, 1);
+	#endif
+	// TODO port "music" to new V3 badge
 
   while (1) {
 		badge_eink_display(pictures[picture_id], (selected_lut+1) << DISPLAY_FLAG_LUT_BIT);
@@ -388,6 +391,8 @@ app_main(void) {
 		}
 		ets_delay_us(500000);
 		buzz = !buzz;
+		#ifdef PORTEXP_PIN_NUM_LEDS
 		// badge_portexp_set_output_state(PORTEXP_PIN_NUM_VIBRATOR, buzz);
+		#endif
   }
 }
