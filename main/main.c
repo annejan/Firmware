@@ -23,6 +23,9 @@
 #include "imgv2_nick.h"
 #include "imgv2_weather.h"
 #include "imgv2_test.h"
+#include "knorrie.h"
+#include "logo.h"
+#include "plain.h"
 
 esp_err_t event_handler(void *ctx, system_event_t *event) { return ESP_OK; }
 
@@ -260,13 +263,16 @@ void displayMenu(const char *menu_title, const struct menu_item *itemlist) {
 }
 
 // pictures
-#define NUM_PICTURES 5
+#define NUM_PICTURES 8
 const uint8_t *pictures[NUM_PICTURES] = {
 	imgv2_sha,
 	imgv2_menu,
 	imgv2_nick,
 	imgv2_weather,
 	imgv2_test,
+	logo,
+	knorrie,
+	plain
 };
 
 void
@@ -376,6 +382,6 @@ app_main(void) {
         } else {
 					picture_id=0;
 				}
-				ets_delay_us(5000000);
+				ets_delay_us(500000);
       }
 }
