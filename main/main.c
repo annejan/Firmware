@@ -365,23 +365,25 @@ app_main(void) {
   badge_eink_init();
 
   int picture_id = 0;
-	ets_printf("Drawimage begin\n");
+	ets_printf("SHA 2017 demo\n");
   badge_eink_display(pictures[picture_id], 0);
-	ets_printf("Drawimage gedaan");
+	ets_printf("Let's go . .");
 
-  //int selected_lut = LUT_PART;
-  //writeLUT(selected_lut); // configure fast LUT
+	// int selected_lut = LUT_FASTEST;
+	int selected_lut = LUT_DEFAULT;
+
+	bool buzz = false;
 
   while (1) {
+		badge_eink_display(pictures[picture_id], (selected_lut+1) << DISPLAY_FLAG_LUT_BIT);
 
-        badge_eink_display(pictures[picture_id], 0);
-
-
-        if (picture_id + 1 < NUM_PICTURES) {
-          picture_id++;
-        } else {
-					picture_id=0;
-				}
-				ets_delay_us(500000);
-      }
+	  if (picture_id + 1 < NUM_PICTURES) {
+	    picture_id++;
+	  } else {
+			picture_id=0;
+		}
+		ets_delay_us(500000);
+		buzz = !buzz;
+		badge_portexp_set_output_state(PORTEXP_PIN_NUM_VIBRATOR, buzz);
+  }
 }
