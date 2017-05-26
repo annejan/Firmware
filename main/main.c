@@ -26,6 +26,7 @@
 #include "knorrie.h"
 #include "logo.h"
 #include "plain.h"
+#include "badgers.h"
 
 esp_err_t event_handler(void *ctx, system_event_t *event) { return ESP_OK; }
 
@@ -263,12 +264,12 @@ void displayMenu(const char *menu_title, const struct menu_item *itemlist) {
 }
 
 // pictures
-#define NUM_PICTURES 8
+#define NUM_PICTURES 4
 const uint8_t *pictures[NUM_PICTURES] = {
-	imgv2_sha,
-	imgv2_menu,
-	imgv2_nick,
-	imgv2_weather,
+	badger_1,
+	badger_2,
+	badger_3,
+	badger_4,
 	imgv2_test,
 	logo,
 	knorrie,
