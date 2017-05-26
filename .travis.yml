@@ -29,12 +29,3 @@ script:
   # Build project from the git repository
   - make
 
-notifications:
-  irc:
-    channels:
-      - "chat.freenode.net#sha2017-badge"
-      - "chat.freenode.net#sha2017-badge-dev"
-    on_success: change
-    on_failure: always
-    use_notice: true
-    skip_join: true
