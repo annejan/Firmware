@@ -288,7 +288,11 @@ const uint8_t *pictures[NUM_PICTURES] = {
 	badgers_1,
 	badgers_2,
 	badgers_3,
-	badgers_4
+	badgers_4,
+	badger3_1,
+	badger3_2,
+	badger3_3,
+	badger3_4
 };
 
 void
@@ -398,37 +402,50 @@ app_main(void) {
 	badge_eink_display(outline, (selected_lut+1) << DISPLAY_FLAG_LUT_BIT);
 	ets_delay_us(500000);
 
-	// badge_eink_display(imgv2_sha, (selected_lut+1) << DISPLAY_FLAG_LUT_BIT);
-	// ets_delay_us(500000);
+	badge_eink_display(imgv2_sha, (selected_lut+1) << DISPLAY_FLAG_LUT_BIT);
+	ets_delay_us(500000);
 
-  // selected_lut = LUT_FASTEST;
-	//
-	// int jemoeder = 0;
-	// int duurttelang = 8;
-	//
-  // while (jemoeder < duurttelang) {
-	// 	badge_eink_display(pictures[picture_id], (selected_lut+1) << DISPLAY_FLAG_LUT_BIT);
-	//
-	//   if (picture_id + 1 < 4) {
-	//     picture_id++;
-	//   } else {
-	// 		picture_id=0;
-	// 	}
-	// 	jemoeder++;
-  // }
-	//
-	// jemoeder = 0;
-	// duurttelang = 32;
-	// while (jemoeder < duurttelang) {
-	// 	badge_eink_display(pictures[picture_id], (selected_lut+1) << DISPLAY_FLAG_LUT_BIT);
-	//
-	// 	if (picture_id + 1 < 8) {
-	// 		picture_id++;
-	// 	} else {
-	// 		picture_id=4;
-	// 	}
-	// 	jemoeder++;
-	// }
+  selected_lut = LUT_FASTEST;
+
+	int jemoeder = 0;
+	int duurttelang = 8;
+
+  while (jemoeder < duurttelang) {
+		badge_eink_display(pictures[picture_id], (selected_lut+1) << DISPLAY_FLAG_LUT_BIT);
+
+	  if (picture_id + 1 < 4) {
+	    picture_id++;
+	  } else {
+			picture_id=0;
+		}
+		jemoeder++;
+  }
+
+	jemoeder = 0;
+	duurttelang = 16;
+	while (jemoeder < duurttelang) {
+		badge_eink_display(pictures[picture_id], (selected_lut+1) << DISPLAY_FLAG_LUT_BIT);
+
+		if (picture_id + 1 < 8) {
+			picture_id++;
+		} else {
+			picture_id=4;
+		}
+		jemoeder++;
+	}
+
+	jemoeder = 0;
+	duurttelang = 16;
+	while (jemoeder < duurttelang) {
+		badge_eink_display(pictures[picture_id], (selected_lut+1) << DISPLAY_FLAG_LUT_BIT);
+
+		if (picture_id + 1 < 12) {
+			picture_id++;
+		} else {
+			picture_id=8;
+		}
+		jemoeder++;
+	}
 
 	//
 	// selected_lut = LUT_DEFAULT;
@@ -438,5 +455,4 @@ app_main(void) {
 	displayScroll(scrollTxt);
 
 	demoGreyscaleImg4();
-
 }
