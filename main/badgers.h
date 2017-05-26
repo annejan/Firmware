@@ -2,3 +2,7 @@
 #include "badger_2.h"
 #include "badger_3.h"
 #include "badger_4.h"
+#include "badgers_1.h"
+#include "badgers_2.h"
+#include "badgers_3.h"
+#include "badgers_4.h"
