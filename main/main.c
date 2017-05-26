@@ -370,8 +370,6 @@ app_main(void) {
   badge_eink_display(pictures[picture_id], 0);
 	ets_printf("Let's go . .");
 
-	int selected_lut = LUT_FASTEST;
-	// int selected_lut = LUT_DEFAULT;
 
 	bool buzz = false;
 
@@ -383,6 +381,13 @@ app_main(void) {
 	// TODO port "music" to new V3 badge
 
 	// demo_leds();
+	int selected_lut = LUT_DEFAULT;
+
+	badge_eink_display(imgv2_sha, (selected_lut+1) << DISPLAY_FLAG_LUT_BIT);
+
+	ets_delay_us(500000);
+
+  selected_lut = LUT_FASTEST;
 
 	int jemoeder = 0;
 	int duurttelang = 64;
@@ -402,6 +407,10 @@ app_main(void) {
 		#endif
 		jemoeder++;
   }
+
+	selected_lut = LUT_DEFAULT;
+
+	badge_eink_display(imgv2_sha, (selected_lut+1) << DISPLAY_FLAG_LUT_BIT);
 
 	demoGreyscaleImg1();
 
