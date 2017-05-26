@@ -7,7 +7,7 @@
 #include <gde-driver.h>
 
 #include "event_queue.h"
-#include "img_hacking.h"
+#include "imgv2_hacking.h"
 
 /*
  * The greyscale curve was generated with:
@@ -59,7 +59,7 @@ void demoGreyscaleImg1(void) {
     setRamPointer(0, 0);
     gdeWriteCommandInit(0x24);
     int x, y;
-    const uint8_t *ptr = img_hacking;
+    const uint8_t *ptr = imgv2_hacking;
     for (y = 0; y < DISP_SIZE_Y; y++) {
       uint8_t res = 0;
       for (x = 0; x < DISP_SIZE_X; x++) {

@@ -121,6 +121,10 @@ struct menu_item {
   void (*handler)(void);
 };
 
+struct scroll_item {
+	const char *title;
+};
+
 #include "demo_text1.h"
 #include "demo_text2.h"
 #include "demo_greyscale1.h"
@@ -162,6 +166,34 @@ const struct menu_item demoMenu[] = {
     {NULL, NULL},
 };
 
+const struct scroll_item scrollTxt[] = {
+	{""},
+	{""},
+	{""},
+	{""},
+	{""},
+	{""},
+	{""},
+	{""},
+	{"deFEEST eink demo"},
+	{""},
+	{"Released at Outline 2017"},
+	{""},
+	{"Enjoy"},
+	{"Lorem ipsum"},
+	{"Lorem ipsum"},
+	{"Lorem ipsum"},
+	{"Lorem ipsum"},
+	{"Lorem ipsum"},
+	{"Lorem ipsum"},
+	{"Lorem ipsum"},
+	{"Lorem ipsum"},
+	{"Lorem ipsum"},
+	{"Lorem ipsum"},
+	{"Lorem ipsum"},
+	{"Lorem ipsum"},
+};
+
 #ifndef CONFIG_SHA_BADGE_EINK_DEPG0290B1
 const uint8_t eink_upd_menu_lut[30] = {
 	0x99, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -184,9 +216,10 @@ const struct badge_eink_update eink_upd_menu = {
 	.y_end    = 295,
 };
 
-#define MENU_UPDATE_CYCLES 8
+#define MENU_UPDATE_CYCLES 16
+#define MENU_NUM_LINES 40
 uint8_t screen_buf[296*16];
-void displayMenu(const char *menu_title, const struct menu_item *itemlist) {
+void displayScroll(const struct scroll_item *itemlist) {
   int num_items = 0;
   while (itemlist[num_items].title != NULL)
     num_items++;
@@ -194,72 +227,37 @@ void displayMenu(const char *menu_title, const struct menu_item *itemlist) {
   int scroll_pos = 0;
   int item_pos = 0;
   int num_draw = 0;
-  while (1) {
-    TickType_t xTicksToWait = portMAX_DELAY;
+  while (scroll_pos < MENU_NUM_LINES) {
+    // TickType_t xTicksToWait = portMAX_DELAY;
 
     /* draw menu */
     if (num_draw < MENU_UPDATE_CYCLES) {
-	  if (num_draw == 0) {
-		// init buffer
-		draw_font(screen_buf, 0, 0, BADGE_EINK_WIDTH, menu_title,
-			FONT_16PX | FONT_INVERT | FONT_FULL_WIDTH | FONT_UNDERLINE_2);
+		  if (num_draw == 0) {
+				// init buffer
 
-		int i;
-		for (i = 0; i < 7; i++) {
-		  int pos = scroll_pos + i;
-		  draw_font(screen_buf, 0, 16+16*i, BADGE_EINK_WIDTH,
-			  (pos < num_items) ? itemlist[pos].title : "",
-			  FONT_16PX | FONT_FULL_WIDTH |
-			  ((pos == item_pos) ? 0 : FONT_INVERT));
-		}
-	  }
+				int i;
+				for (i = 0; i < 8; i++) {
+				  int pos = scroll_pos + i;
+				  draw_font(screen_buf, 0, 16*i, BADGE_EINK_WIDTH,
+					  (pos < num_items) ? itemlist[pos].title : "",
+					  FONT_16PX | FONT_FULL_WIDTH | FONT_INVERT);
+				}
+		  }
 
-	  // all eink displays have 2 'pages'; after writing the second one,
-	  // we don't have to write the image itself anymore.
-	  if (num_draw < 2)
-		badge_eink_display(screen_buf, DISPLAY_FLAG_NO_UPDATE);
+		  // all eink displays have 2 'pages'; after writing the second one,
+		  // we don't have to write the image itself anymore.
+		  if (num_draw < 2)
+			badge_eink_display(screen_buf, DISPLAY_FLAG_NO_UPDATE);
 
-	  badge_eink_update(&eink_upd_menu);
+		  badge_eink_update(&eink_upd_menu);
 
       num_draw++;
       if (num_draw < MENU_UPDATE_CYCLES)
         xTicksToWait = 0;
     }
-
-    /* handle input */
-    uint32_t buttons_down;
-    if (xQueueReceive(evt_queue, &buttons_down, xTicksToWait)) {
-      if (buttons_down & (1 << 1)) {
-        ets_printf("Button B handling\n");
-        return;
-      }
-      if (buttons_down & (1 << 2)) {
-        ets_printf("Selected '%s'\n", itemlist[item_pos].title);
-        if (itemlist[item_pos].handler != NULL)
-          itemlist[item_pos].handler();
-        num_draw = 0;
-        ets_printf("Button MID handled\n");
-        continue;
-      }
-      if (buttons_down & (1 << 3)) {
-        if (item_pos > 0) {
-          item_pos--;
-          if (scroll_pos > item_pos)
-            scroll_pos = item_pos;
-          num_draw = 0;
-        }
-        ets_printf("Button UP handled\n");
-      }
-      if (buttons_down & (1 << 4)) {
-        if (item_pos + 1 < num_items) {
-          item_pos++;
-          if (scroll_pos + 6 < item_pos)
-            scroll_pos = item_pos - 6;
-          num_draw = 0;
-        }
-        ets_printf("Button DOWN handled\n");
-      }
-    }
+		scroll_pos++;
+		num_draw = 0;
+		ets_delay_us(5000);
   }
 }
 
@@ -269,11 +267,7 @@ const uint8_t *pictures[NUM_PICTURES] = {
 	badger_1,
 	badger_2,
 	badger_3,
-	badger_4,
-	imgv2_test,
-	logo,
-	knorrie,
-	plain
+	badger_4
 };
 
 void
@@ -367,9 +361,6 @@ app_main(void) {
 
   int picture_id = 0;
 	ets_printf("SHA 2017 demo\n");
-  badge_eink_display(pictures[picture_id], 0);
-	ets_printf("Let's go . .");
-
 
 	bool buzz = false;
 
@@ -382,36 +373,39 @@ app_main(void) {
 
 	// demo_leds();
 	int selected_lut = LUT_DEFAULT;
-
+	//
 	badge_eink_display(imgv2_sha, (selected_lut+1) << DISPLAY_FLAG_LUT_BIT);
-
 	ets_delay_us(500000);
+	//
+	// badge_eink_display(imgv2_nick, (selected_lut+1) << DISPLAY_FLAG_LUT_BIT);
+	// ets_delay_us(500000);
 
-  selected_lut = LUT_FASTEST;
+  // selected_lut = LUT_FASTEST;
+	//
+	// int jemoeder = 0;
+	// int duurttelang = 64;
+	//
+  // while (jemoeder < duurttelang) {
+	// 	badge_eink_display(pictures[picture_id], (selected_lut+1) << DISPLAY_FLAG_LUT_BIT);
+	//
+	//   if (picture_id + 1 < NUM_PICTURES) {
+	//     picture_id++;
+	//   } else {
+	// 		picture_id=0;
+	// 	}
+	// 	// ets_delay_us(500000);
+	// 	buzz = !buzz;
+	// 	#ifdef PORTEXP_PIN_NUM_LEDS
+	// 	// badge_portexp_set_output_state(PORTEXP_PIN_NUM_VIBRATOR, buzz);
+	// 	#endif
+	// 	jemoeder++;
+  // }
+	//
+	// selected_lut = LUT_DEFAULT;
+	//
+	// badge_eink_display(imgv2_sha, (selected_lut+1) << DISPLAY_FLAG_LUT_BIT);
 
-	int jemoeder = 0;
-	int duurttelang = 64;
+	// demoGreyscaleImg4();
 
-  while (jemoeder < duurttelang) {
-		badge_eink_display(pictures[picture_id], (selected_lut+1) << DISPLAY_FLAG_LUT_BIT);
-
-	  if (picture_id + 1 < NUM_PICTURES) {
-	    picture_id++;
-	  } else {
-			picture_id=0;
-		}
-		// ets_delay_us(500000);
-		buzz = !buzz;
-		#ifdef PORTEXP_PIN_NUM_LEDS
-		// badge_portexp_set_output_state(PORTEXP_PIN_NUM_VIBRATOR, buzz);
-		#endif
-		jemoeder++;
-  }
-
-	selected_lut = LUT_DEFAULT;
-
-	badge_eink_display(imgv2_sha, (selected_lut+1) << DISPLAY_FLAG_LUT_BIT);
-
-	demoGreyscaleImg1();
-
+	displayScroll(scrollTxt);
 }
