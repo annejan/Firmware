@@ -395,7 +395,7 @@ app_main(void) {
 	  } else {
 			picture_id=0;
 		}
-		ets_delay_us(500000);
+		// ets_delay_us(500000);
 		buzz = !buzz;
 		#ifdef PORTEXP_PIN_NUM_LEDS
 		// badge_portexp_set_output_state(PORTEXP_PIN_NUM_VIBRATOR, buzz);
