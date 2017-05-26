@@ -370,8 +370,8 @@ app_main(void) {
   badge_eink_display(pictures[picture_id], 0);
 	ets_printf("Let's go . .");
 
-	// int selected_lut = LUT_FASTEST;
-	int selected_lut = LUT_DEFAULT;
+	int selected_lut = LUT_FASTEST;
+	// int selected_lut = LUT_DEFAULT;
 
 	bool buzz = false;
 
