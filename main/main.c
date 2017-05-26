@@ -381,7 +381,12 @@ app_main(void) {
 	#endif
 	// TODO port "music" to new V3 badge
 
-  while (1) {
+	// demo_leds();
+
+	int jemoeder = 0;
+	int duurttelang = 64;
+
+  while (jemoeder < duurttelang) {
 		badge_eink_display(pictures[picture_id], (selected_lut+1) << DISPLAY_FLAG_LUT_BIT);
 
 	  if (picture_id + 1 < NUM_PICTURES) {
@@ -394,5 +399,9 @@ app_main(void) {
 		#ifdef PORTEXP_PIN_NUM_LEDS
 		// badge_portexp_set_output_state(PORTEXP_PIN_NUM_VIBRATOR, buzz);
 		#endif
+		jemoeder++;
   }
+
+	demoGreyscaleImg1();
+
 }
