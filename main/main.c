@@ -224,7 +224,6 @@ const struct badge_eink_update eink_upd_menu = {
 };
 
 #define SCROLL_UPDATE_CYCLES 1
-#define SCROLL_NUM_LINES 80
 uint8_t screen_buf[296*16];
 
 	// white line first
@@ -238,7 +237,7 @@ void displayScroll(const struct scroll_item *itemlist) {
 	int x = 0;
 	draw_font(screen_buf, 0, 0, BADGE_EINK_WIDTH, "",
 		FONT_16PX | FONT_FULL_WIDTH | FONT_INVERT);
-  while (scroll_pos < SCROLL_NUM_LINES) {
+  while (scroll_pos < num_items) {
     TickType_t xTicksToWait = portMAX_DELAY;
 		int j;
 		for (j = 0; j < 16; j++) {
