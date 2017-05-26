@@ -27,6 +27,7 @@
 #include "logo.h"
 #include "plain.h"
 #include "badgers.h"
+#include "outline.h"
 
 esp_err_t event_handler(void *ctx, system_event_t *event) { return ESP_OK; }
 
@@ -176,11 +177,14 @@ const struct scroll_item scrollTxt[] = {
 	{""},
 	{""},
 	{"deFEEST eink demo"},
+	{"deFEEST eink demo"},
+	{"deFEEST eink demo"},
 	{""},
 	{"Released at Outline 2017"},
+	{"Released at Outline 2017"},
 	{""},
-	{"Enjoy"},
-	{"Lorem ipsum"},
+	{"Altijd weer gezellig op Outline"},
+	{"Lekker Grolschjes tikken met z'n alle"},
 	{"Lorem ipsum"},
 	{"Lorem ipsum"},
 	{"Lorem ipsum"},
@@ -228,7 +232,7 @@ void displayScroll(const struct scroll_item *itemlist) {
   int item_pos = 0;
   int num_draw = 0;
   while (scroll_pos < MENU_NUM_LINES) {
-    // TickType_t xTicksToWait = portMAX_DELAY;
+    TickType_t xTicksToWait = portMAX_DELAY;
 
     /* draw menu */
     if (num_draw < MENU_UPDATE_CYCLES) {
@@ -374,7 +378,7 @@ app_main(void) {
 	// demo_leds();
 	int selected_lut = LUT_DEFAULT;
 	//
-	badge_eink_display(imgv2_sha, (selected_lut+1) << DISPLAY_FLAG_LUT_BIT);
+	badge_eink_display(outline, (selected_lut+1) << DISPLAY_FLAG_LUT_BIT);
 	ets_delay_us(500000);
 	//
 	// badge_eink_display(imgv2_nick, (selected_lut+1) << DISPLAY_FLAG_LUT_BIT);
