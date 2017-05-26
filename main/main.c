@@ -175,27 +175,21 @@ const struct scroll_item scrollTxt[] = {
 	{""},
 	{""},
 	{""},
+	{"     SHA BADGE 2017 demo"},
 	{""},
-	{"deFEEST eink demo"},
-	{"deFEEST eink demo"},
-	{"deFEEST eink demo"},
 	{""},
 	{"Released at Outline 2017"},
-	{"Released at Outline 2017"},
 	{""},
-	{"Altijd weer gezellig op Outline"},
-	{"Lekker Grolschjes tikken met z'n alle"},
-	{"Lorem ipsum"},
-	{"Lorem ipsum"},
-	{"Lorem ipsum"},
-	{"Lorem ipsum"},
-	{"Lorem ipsum"},
-	{"Lorem ipsum"},
-	{"Lorem ipsum"},
-	{"Lorem ipsum"},
-	{"Lorem ipsum"},
-	{"Lorem ipsum"},
-	{"Lorem ipsum"},
+	{"Altijd weer gezellig op"},
+	{"Outline 2017 Willemsoord"},
+	{"Demo's Chiptunes en een"},
+	{"boel Nederlands gelul"},
+	{"Ook deFEEST is weer van de"},
+	{"Partij . ."},
+	{""},
+	{""},
+	{""},
+	{"         deFeest"},
 };
 
 #ifndef CONFIG_SHA_BADGE_EINK_DEPG0290B1
@@ -220,48 +214,53 @@ const struct badge_eink_update eink_upd_menu = {
 	.y_end    = 295,
 };
 
-#define MENU_UPDATE_CYCLES 16
-#define MENU_NUM_LINES 40
+#define SCROLL_UPDATE_CYCLES 2
+#define SCROLL_NUM_LINES 80
 uint8_t screen_buf[296*16];
+
+	// white line first
 void displayScroll(const struct scroll_item *itemlist) {
   int num_items = 0;
   while (itemlist[num_items].title != NULL)
     num_items++;
-
   int scroll_pos = 0;
   int item_pos = 0;
   int num_draw = 0;
-  while (scroll_pos < MENU_NUM_LINES) {
+	draw_font(screen_buf, 0, 0, BADGE_EINK_WIDTH, "",
+		FONT_16PX | FONT_FULL_WIDTH | FONT_INVERT);
+  while (scroll_pos < SCROLL_NUM_LINES) {
     TickType_t xTicksToWait = portMAX_DELAY;
+		int j;
+		for (j = 0; j < 16; j++) {
+	    /* draw menu */
+	    if (num_draw < SCROLL_UPDATE_CYCLES) {
+			  if (num_draw == 0) {
+					// init buffer
 
-    /* draw menu */
-    if (num_draw < MENU_UPDATE_CYCLES) {
-		  if (num_draw == 0) {
-				// init buffer
+					int i;
+					for (i = 0; i < 8; i++) {
+					  int pos = scroll_pos + i;
+					  draw_font(screen_buf, 0, 16-j+16*i, BADGE_EINK_WIDTH,
+						  (pos < num_items) ? itemlist[pos].title : sprintf("%d", scroll_pos),
+						  FONT_16PX | FONT_FULL_WIDTH | FONT_INVERT);
+					}
+			  }
 
-				int i;
-				for (i = 0; i < 8; i++) {
-				  int pos = scroll_pos + i;
-				  draw_font(screen_buf, 0, 16*i, BADGE_EINK_WIDTH,
-					  (pos < num_items) ? itemlist[pos].title : "",
-					  FONT_16PX | FONT_FULL_WIDTH | FONT_INVERT);
-				}
-		  }
+			  // all eink displays have 2 'pages'; after writing the second one,
+			  // we don't have to write the image itself anymore.
+			  if (num_draw < 2)
+				badge_eink_display(screen_buf, DISPLAY_FLAG_NO_UPDATE);
 
-		  // all eink displays have 2 'pages'; after writing the second one,
-		  // we don't have to write the image itself anymore.
-		  if (num_draw < 2)
-			badge_eink_display(screen_buf, DISPLAY_FLAG_NO_UPDATE);
+			  badge_eink_update(&eink_upd_menu);
 
-		  badge_eink_update(&eink_upd_menu);
-
-      num_draw++;
-      if (num_draw < MENU_UPDATE_CYCLES)
-        xTicksToWait = 0;
-    }
-		scroll_pos++;
+	      num_draw++;
+	      if (num_draw < SCROLL_UPDATE_CYCLES)
+	        xTicksToWait = 0;
+	    }
+			num_draw = 0;
+		}
 		num_draw = 0;
-		ets_delay_us(5000);
+		scroll_pos++;
   }
 }
 
@@ -384,26 +383,26 @@ app_main(void) {
 	// badge_eink_display(imgv2_nick, (selected_lut+1) << DISPLAY_FLAG_LUT_BIT);
 	// ets_delay_us(500000);
 
-  // selected_lut = LUT_FASTEST;
-	//
-	// int jemoeder = 0;
-	// int duurttelang = 64;
-	//
-  // while (jemoeder < duurttelang) {
-	// 	badge_eink_display(pictures[picture_id], (selected_lut+1) << DISPLAY_FLAG_LUT_BIT);
-	//
-	//   if (picture_id + 1 < NUM_PICTURES) {
-	//     picture_id++;
-	//   } else {
-	// 		picture_id=0;
-	// 	}
-	// 	// ets_delay_us(500000);
-	// 	buzz = !buzz;
-	// 	#ifdef PORTEXP_PIN_NUM_LEDS
-	// 	// badge_portexp_set_output_state(PORTEXP_PIN_NUM_VIBRATOR, buzz);
-	// 	#endif
-	// 	jemoeder++;
-  // }
+  selected_lut = LUT_FASTEST;
+
+	int jemoeder = 0;
+	int duurttelang = 32;
+
+  while (jemoeder < duurttelang) {
+		badge_eink_display(pictures[picture_id], (selected_lut+1) << DISPLAY_FLAG_LUT_BIT);
+
+	  if (picture_id + 1 < NUM_PICTURES) {
+	    picture_id++;
+	  } else {
+			picture_id=0;
+		}
+		// ets_delay_us(500000);
+		buzz = !buzz;
+		#ifdef PORTEXP_PIN_NUM_LEDS
+		// badge_portexp_set_output_state(PORTEXP_PIN_NUM_VIBRATOR, buzz);
+		#endif
+		jemoeder++;
+  }
 	//
 	// selected_lut = LUT_DEFAULT;
 	//
