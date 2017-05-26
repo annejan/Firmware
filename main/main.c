@@ -279,7 +279,7 @@ void displayScroll(const struct scroll_item *itemlist) {
 }
 
 // pictures
-#define NUM_PICTURES 8
+#define NUM_PICTURES 12
 const uint8_t *pictures[NUM_PICTURES] = {
 	badger_1,
 	badger_2,
