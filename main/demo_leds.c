@@ -14,12 +14,12 @@
 void demo_leds(void)
 {
 	uint8_t rgbw[6*4] = {
-		 21,  42,  63, 1,
-		 42,  63,  42, 1,
-		 63,  42,  21, 1,
-		 42,  21,   0, 1,
-		 21,   0,  21, 1,
-		  0,  21,  42, 1,
+		 84,  168,  255, 1,
+		 168,  255,  168, 1,
+		 255,  168,  84, 1,
+		 168,  84,   0, 1,
+		 84,   0,  84, 1,
+		  0,  84,  168, 1,
 	};
 	int8_t dir[6*4] = {
 		+1, +1, -1, 0,
@@ -72,15 +72,15 @@ void glow_leds(void)
 	int8_t glow[6] = {
 		1,
 		2,
-		4,
-		4,
+		3,
+		3,
 		2,
 		1
 	};
 
 	int lelijk = 0;
 
-	while (lelijk < 64) {
+	while (lelijk < 255) {
 		// exit on random keypress
 		uint32_t buttons_down = 0;
 		if (xQueueReceive(evt_queue, &buttons_down, 10 / portTICK_RATE_MS))

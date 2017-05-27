@@ -29,6 +29,7 @@
 #include "plain.h"
 #include "badgers.h"
 #include "outline.h"
+#include "knorrie.h"
 
 esp_err_t event_handler(void *ctx, system_event_t *event) { return ESP_OK; }
 
@@ -129,6 +130,7 @@ struct scroll_item {
 
 #include "demo_text1.h"
 #include "demo_text2.h"
+#include "demo_text3.h"
 #include "demo_greyscale1.h"
 #include "demo_greyscale2.h"
 #include "demo_greyscale_img1.h"
@@ -182,21 +184,21 @@ const struct scroll_item scrollTxt[] = {
 	{" Released at Outline 2017"},
 	{""},
 	{""},
-	{"Altijd weer gezellig op"},
+	{"Back once again at amazing"},
 	{""},
-	{"Outline 2017 Willemsoord"},
+	{"Outline     2017 Willemsoord"},
 	{""},
-	{"Demo's Chiptunes en een"},
+	{"Demo's Chiptunes and lots o"},
 	{""},
-	{"boel Nederlands gelul"},
+	{"crazy Dutchies, Germans &&"},
 	{""},
-	{"Ook deFEEST is weer van de"},
+	{"others, deFEEST is back "},
 	{""},
-	{"Partij . ."},
+	{"to party . ."},
 	{""},
 	{""},
 	{""},
-	{"         deFeest"},
+	{"           deFEEST"},
 	{""},
 	{""},
 	{""},
@@ -218,25 +220,25 @@ const struct scroll_item secondScrollTxt[] = {
 	{" More code: tsd/cronix"},
 	{""},
 	{""},
-	{" Graphics: Anus, Knorrie"},
+	{" Graphics: Anus, Sebastius"},
 	{""},
-	{"More graphics: Adulau && Weebl"},
+	{" Adulau, Knorrie && Weebl"},
 	{""},
-	{"See you at SHA2017 ?!"},
+	{" -=- See you @ SHA2017 -=-"},
 	{""},
 	{"  August 4-8 2017"},
 	{""},
 	{"                   Zeewolde"},
 	{""},
-	{"If you do, make sure to visit"},
+	{"If you do, make sure to"},
 	{""},
-	{"the deFEEST village"},
+	{"visit the deFEEST village!"},
 	{""},
-	{"sha2017.org"},
+	{"sha2017.org        deFEEST.nl"},
 	{""},
 	{""},
 	{""},
-	{"       deFeest 2017"},
+	{"         deFEEST 2017"},
 	{""},
 	{""},
 	{""},
@@ -502,11 +504,14 @@ app_main(void) {
 
 	displayScroll(scrollTxt);
 
-	
+	badge_eink_display(knorrie, (selected_lut+1) << DISPLAY_FLAG_LUT_BIT);
+	ets_delay_us(500000);
 
 	demoText2();
 
 	displayScroll(secondScrollTxt);
+
+	demoText3();
 
 	demoGreyscaleImg4();
 }

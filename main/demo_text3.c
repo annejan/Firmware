@@ -15,7 +15,7 @@
 extern uint8_t screen_buf[296*16];
 
 void
-demoText2(void) {
+demoText3(void) {
 	/* draw test pattern */
 	{
 		int y;
@@ -29,11 +29,10 @@ demoText2(void) {
 
 	/* draw text with 16px font */
 	const char *line_1 =
-		"Greetings to everybody with a head! Thanks to  "
-		"the person puking his   "
-		"guts out waking me up in"
-		"the process! Thanks      "
-		"Outline Orga for making this possible. ";
+		"This demo is running on a prototype badge  "
+		"for visitors of the SHA2017 hacker event. "
+		"This is a 1bit monochrome display  "
+		"with a 296x128 pixel resolution . .";
 
 	int pos = 0;
 	int row = 8;
