@@ -52,7 +52,9 @@ demoText2(void) {
 	badge_eink_display(screen_buf, (1 << DISPLAY_FLAG_LUT_BIT));
 
 	// wait for random keypress
-	uint32_t buttons_down = 0;
-	while ((buttons_down & 0xffff) == 0)
-		xQueueReceive(evt_queue, &buttons_down, portMAX_DELAY);
+	// uint32_t buttons_down = 0;
+	// while ((buttons_down & 0xffff) == 0)
+	// 	xQueueReceive(evt_queue, &buttons_down, portMAX_DELAY);
+
+	vTaskDelay(1000/portTICK_PERIOD_MS);
 }

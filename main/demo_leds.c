@@ -30,7 +30,9 @@ void demo_leds(void)
 		+1, +1, +1, 0,
 	};
 
-	while (1) {
+	int lelijk = 0;
+
+	while (lelijk < 1024) {
 		// exit on random keypress
 		uint32_t buttons_down = 0;
 		if (xQueueReceive(evt_queue, &buttons_down, 10 / portTICK_RATE_MS))
@@ -49,6 +51,73 @@ void demo_leds(void)
 			if (rgbw[i] == 63)
 				dir[i] = -1;
 		}
+		lelijk++;
+	}
+
+	memset(rgbw, 0, sizeof(rgbw));
+	badge_leds_set_state(rgbw);
+}
+
+void glow_leds(void)
+{
+	uint8_t rgbw[6*4] = {
+		 0,  0,  0, 1,
+		 0,  0,  0, 1,
+		 0,  0,  0, 1,
+		 0,  0,  0, 1,
+		 0,  0,  0, 1,
+		 0,  0,  0, 1,
+	};
+
+	int8_t glow[6] = {
+		1,
+		2,
+		4,
+		4,
+		2,
+		1
+	};
+
+	int lelijk = 0;
+
+	while (lelijk < 64) {
+		// exit on random keypress
+		uint32_t buttons_down = 0;
+		if (xQueueReceive(evt_queue, &buttons_down, 10 / portTICK_RATE_MS))
+		{
+			if (buttons_down & 0xffff)
+				break;
+		}
+
+		badge_leds_set_state(rgbw);
+
+		int i;
+		for (i=0; i<6*4; i+=4) {
+			int meuk = rgbw[i];
+			meuk += glow[i/4];
+			if (meuk > 255)
+				meuk = 255;
+			rgbw[i] = meuk;
+		}
+		lelijk++;
+	}
+
+	while (lelijk >= 0) {
+		// exit on random keypress
+		uint32_t buttons_down = 0;
+		if (xQueueReceive(evt_queue, &buttons_down, 10 / portTICK_RATE_MS))
+		{
+			if (buttons_down & 0xffff)
+				break;
+		}
+
+		badge_leds_set_state(rgbw);
+
+		int i;
+		for (i=0; i<6*4; i+=4) {
+			rgbw[i] -= 1;
+		}
+		lelijk--;
 	}
 
 	memset(rgbw, 0, sizeof(rgbw));

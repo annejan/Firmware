@@ -179,18 +179,64 @@ const struct scroll_item scrollTxt[] = {
 	{"     SHA BADGE 2017 demo"},
 	{""},
 	{""},
-	{"Released at Outline 2017"},
+	{" Released at Outline 2017"},
+	{""},
 	{""},
 	{"Altijd weer gezellig op"},
+	{""},
 	{"Outline 2017 Willemsoord"},
+	{""},
 	{"Demo's Chiptunes en een"},
+	{""},
 	{"boel Nederlands gelul"},
+	{""},
 	{"Ook deFEEST is weer van de"},
+	{""},
 	{"Partij . ."},
 	{""},
 	{""},
 	{""},
 	{"         deFeest"},
+	{""},
+	{""},
+	{""},
+	{""},
+	{""},
+	{""},
+	{""},
+	{""},
+};
+
+
+const struct scroll_item secondScrollTxt[] = {
+	{""},
+	{""},
+	{""},
+	{"     Code: Anus/deFEEST"},
+	{""},
+	{""},
+	{" More code: tsd/cronix"},
+	{""},
+	{""},
+	{" Graphics: Anus, Knorrie"},
+	{""},
+	{"More graphics: Adulau && Weebl"},
+	{""},
+	{"See you at SHA2017 ?!"},
+	{""},
+	{"  August 4-8 2017"},
+	{""},
+	{"                   Zeewolde"},
+	{""},
+	{"If you do, make sure to visit"},
+	{""},
+	{"the deFEEST village"},
+	{""},
+	{"sha2017.org"},
+	{""},
+	{""},
+	{""},
+	{"       deFeest 2017"},
 	{""},
 	{""},
 	{""},
@@ -224,6 +270,7 @@ const struct badge_eink_update eink_upd_menu = {
 };
 
 #define SCROLL_UPDATE_CYCLES 1
+#define SCROLL_LINE_NUMBERS 24
 uint8_t screen_buf[296*16];
 
 	// white line first
@@ -237,10 +284,10 @@ void displayScroll(const struct scroll_item *itemlist) {
 	int x = 0;
 	draw_font(screen_buf, 0, 0, BADGE_EINK_WIDTH, "",
 		FONT_16PX | FONT_FULL_WIDTH | FONT_INVERT);
-  while (scroll_pos < num_items) {
+  while (scroll_pos < SCROLL_LINE_NUMBERS) { // TODO
     TickType_t xTicksToWait = portMAX_DELAY;
 		int j;
-		for (j = 0; j < 16; j++) {
+		for (j = 0; j < 16; j++) { // smooth scroll
 	    /* draw menu */
 	    if (num_draw < SCROLL_UPDATE_CYCLES) {
 			  if (num_draw == 0) {
@@ -395,7 +442,6 @@ app_main(void) {
 	#endif
 	// TODO port "music" to new V3 badge
 
-	// demo_leds();
 	int selected_lut = LUT_DEFAULT;
 
 	badge_eink_display(outline, (selected_lut+1) << DISPLAY_FLAG_LUT_BIT);
@@ -403,6 +449,8 @@ app_main(void) {
 
 	badge_eink_display(imgv2_sha, (selected_lut+1) << DISPLAY_FLAG_LUT_BIT);
 	ets_delay_us(500000);
+
+	glow_leds();
 
   selected_lut = LUT_FASTEST;
 
@@ -446,12 +494,19 @@ app_main(void) {
 		jemoeder++;
 	}
 
-	//
-	// selected_lut = LUT_DEFAULT;
-	//
-	// badge_eink_display(imgv2_sha, (selected_lut+1) << DISPLAY_FLAG_LUT_BIT);
+	selected_lut = LUT_DEFAULT;
+
+	badge_eink_display(plain, (selected_lut+1) << DISPLAY_FLAG_LUT_BIT);
+
+	demo_leds();
 
 	displayScroll(scrollTxt);
+
+	
+
+	demoText2();
+
+	displayScroll(secondScrollTxt);
 
 	demoGreyscaleImg4();
 }
