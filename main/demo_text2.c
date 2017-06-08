@@ -1,56 +1,57 @@
 #include "sdkconfig.h"
+
+#include <string.h>
+
 #include <freertos/FreeRTOS.h>
 #include <esp_event.h>
-#include <gde.h>
-#include <gdeh029a1.h>
 
-#include "event_queue.h"
+#include <badge_eink.h>
+#include <badge_input.h>
 
-void demoText2(void) {
-  /* update LUT */
-  writeLUT(LUT_DEFAULT);
+#include <font.h>
 
-  /* draw test pattern */
-  setRamArea(0, DISP_SIZE_X_B - 1, 0, DISP_SIZE_Y - 1);
-  setRamPointer(0, 0);
-  gdeWriteCommandInit(0x24);
-  {
-    int x, y;
-    for (y = 0; y < DISP_SIZE_Y; y++) {
-      for (x = 0; x < 16; x++)
-        gdeWriteByte((y & 1) ? 0x55 : 0xaa);
-    }
-  }
-  gdeWriteCommandEnd();
+// re-use screen_buf from main.c
+extern uint8_t screen_buf[296*16];
 
-  /* draw text with 16px font */
-  const char *line_1 = "esp-idf supports compiling multiple files in parallel, "
-                       "so all of the above commands can be run as `make -jN` "
-                       "where `N` is the number of parallel make processes to "
-                       "run (generally N should be equal to or one more than "
-                       "the number of CPU cores in your system.)";
+void
+demoText2(void) {
+	/* draw test pattern */
+	{
+		int y;
+		for (y=0; y<BADGE_EINK_HEIGHT; y++)
+		{
+			memset(&screen_buf[y * (BADGE_EINK_WIDTH/8)], (y&1) ? 0x55 : 0xaa, (BADGE_EINK_WIDTH/8));
+		}
 
-  int pos = 0;
-  int row = 14;
-  while (line_1[pos]) {
-    int num = drawText(row, 16, -16, &line_1[pos],
-                       FONT_16PX | FONT_INVERT | FONT_FULL_WIDTH);
-    if (num == 0)
-      break;
-    pos += num;
-    row -= 2;
-  }
-  drawText(row, 16, -16, "", FONT_16PX | FONT_INVERT | FONT_FULL_WIDTH);
-  row -= 2;
+		badge_eink_display(screen_buf, (1 << DISPLAY_FLAG_LUT_BIT));
+	}
 
-  drawText(0, 0, 0, " Just a status line. Wifi status: not connected",
-           FONT_FULL_WIDTH);
+	/* draw text with 16px font */
+	const char *line_1 =
+		"esp-idf supports compiling multiple files in parallel, "
+		"so all of the above commands can be run as `make -jN` "
+		"where `N` is the number of parallel make processes to "
+		"run (generally N should be equal to or one more than "
+		"the number of CPU cores in your system.)";
 
-  updateDisplay();
-  gdeBusyWait();
+	int pos = 0;
+	int row = 8;
+	while (line_1[pos]) {
+		int num =
+			draw_font(screen_buf, 16, row, BADGE_EINK_WIDTH-32, &line_1[pos], FONT_16PX | FONT_INVERT | FONT_FULL_WIDTH);
+		if (num == 0)
+			break;
+		pos += num;
+		row += 16;
+	}
+	draw_font(screen_buf, 16, row, BADGE_EINK_WIDTH-32, "", FONT_16PX | FONT_INVERT | FONT_FULL_WIDTH);
 
-  // wait for random keypress
-  uint32_t buttons_down = 0;
-  while ((buttons_down & 0x7f) == 0)
-    xQueueReceive(evt_queue, &buttons_down, portMAX_DELAY);
+	draw_font(screen_buf, 0, 120, BADGE_EINK_WIDTH, " Just a status line. Wifi status: not connected", FONT_FULL_WIDTH);
+
+	badge_eink_display(screen_buf, (1 << DISPLAY_FLAG_LUT_BIT));
+
+	// wait for random keypress
+	uint32_t buttons_down = 0;
+	while ((buttons_down & 0xffff) == 0)
+		xQueueReceive(badge_input_queue, &buttons_down, portMAX_DELAY);
 }

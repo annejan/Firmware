@@ -40,7 +40,15 @@ install:
 
 script:
   # Update configuration so that kconfig doesn't start interactive mode
+  - make --version
+  - source set_env.sh
   - make defconfig
   # Build project from the git repository
+  - make
+  # Build the mpy-cross compiler
+  - cd micropython/mpy-cross
+  - make
+  # Build the micropython firmware
+  - cd ../esp32
   - make
 

@@ -1,18 +1,17 @@
 #include "sdkconfig.h"
+
+#ifdef CONFIG_SHA_BADGE_EINK_GDEH029A1
 #include <freertos/FreeRTOS.h>
 #include <esp_event.h>
-#include <gde.h>
-#include <gdeh029a1.h>
 
-#include "event_queue.h"
+#include <badge_input.h>
+#include <badge_eink.h>
+#include <badge_eink_dev.h>
 
 void demoDot1(void) {
-  /* update LUT */
-  writeLUT(LUT_DEFAULT);
-
   /* clear screen */
-  setRamArea(0, DISP_SIZE_X_B - 1, 0, DISP_SIZE_Y - 1);
-  setRamPointer(0, 0);
+  badge_eink_set_ram_area(0, DISP_SIZE_X_B - 1, 0, DISP_SIZE_Y - 1);
+  badge_eink_set_ram_pointer(0, 0);
   gdeWriteCommandInit(0x24);
   {
     int x, y;
@@ -23,9 +22,14 @@ void demoDot1(void) {
   }
   gdeWriteCommandEnd();
 
-  /* update display */
-  updateDisplay();
-  gdeBusyWait();
+  struct badge_eink_update eink_upd = {
+    .lut      = BADGE_EINK_LUT_DEFAULT,
+    .reg_0x3a = 26,   // 26 dummy lines per gate
+    .reg_0x3b = 0x08, // 62us per line
+    .y_start  = 0,
+    .y_end    = 295,
+  };
+  badge_eink_update(&eink_upd);
 
   // init LUT
   static const uint8_t lut[30] = {
@@ -33,11 +37,6 @@ void demoDot1(void) {
       0, 0x99, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0,    0, 0, 0, 17, 1, 0, 0, 0, 0, 0, 0, 0, 0,
   };
-  gdeWriteCommandStream(0x32, lut, 30);
-
-  // tweak timing a bit..
-  gdeWriteCommand_p1(0x3a, 0x02); // 2 dummy lines per gate
-  gdeWriteCommand_p1(0x3b, 0x00); // 30us per line
 
   int px = 100;
   int py = 64;
@@ -51,8 +50,8 @@ void demoDot1(void) {
 
   while (1) {
     uint32_t buttons_down = 0;
-    if (xQueueReceive(evt_queue, &buttons_down, portMAX_DELAY))
-      if ((buttons_down & 0x7f) != 0)
+    if (xQueueReceive(badge_input_queue, &buttons_down, portMAX_DELAY))
+      if ((buttons_down & 0xffff) != 0)
         return;
 
     /* update dot */
@@ -74,8 +73,8 @@ void demoDot1(void) {
       dot_pos = 0;
 
     /* clear screen */
-    setRamArea(0, DISP_SIZE_X_B - 1, 0, DISP_SIZE_Y - 1);
-    setRamPointer(0, 0);
+    badge_eink_set_ram_area(0, DISP_SIZE_X_B - 1, 0, DISP_SIZE_Y - 1);
+    badge_eink_set_ram_pointer(0, 0);
     gdeWriteCommandInit(0x24);
     {
       int x, y;
@@ -90,12 +89,20 @@ void demoDot1(void) {
     for (i = 0; i < 16; i++) {
       int px = dots[i] & 127;
       int py = dots[i] >> 7;
-      setRamPointer(px >> 3, py);
+      badge_eink_set_ram_pointer(px >> 3, py);
       gdeWriteCommand_p1(0x24, 0xff ^ (128 >> (px & 7)));
     }
 
-    /* update display */
-    updateDisplay();
-    gdeBusyWait();
+    struct badge_eink_update eink_upd = {
+      .lut      = BADGE_EINK_LUT_CUSTOM,
+      .lut_custom = lut,
+      .reg_0x3a = 2,  // 2 dummy lines per gate
+      .reg_0x3b = 0,  // 30us per line
+      .y_start  = 0,
+      .y_end    = 295,
+    };
+    badge_eink_update(&eink_upd);
   }
 }
+
+#endif // CONFIG_SHA_BADGE_EINK_GDEH029A1
